@@ -89,7 +89,7 @@
   }
   .card {
     display: flex; flex-direction: column; gap: 6px;
-    min-height: 84px; padding: 13px 15px;
+    min-height: 72px; padding: 12px 15px;
     background: var(--panel); border: 1px solid var(--line);
     border-radius: 11px; box-shadow: var(--shadow);
     cursor: pointer;
@@ -230,15 +230,36 @@
   var GROUP_ORDER = [1, 2, 3, 4, 5, 0];
   var GROUP_NAME = {
     1: '1 · 入门与创作',
-    2: '2 · 应用与专题',
+    2: '2 · 应用与资源',
     3: '3 · 案例与工具',
-    4: '4 · 动态与资讯',
+    4: '4 · 动态与实务',
     5: '5 · 关于',
     0: '其他',
   };
+  // 一级目录里没有 1-5 编号的，在这里手动指定归属组（标题需与知识库完全一致）
+  var MANUAL_GROUP = {
+    '0. 从这里启程': 1,
+    'AI 硬件': 1,
+    'AI领导力修炼之路': 2,
+    '飞书CLI使用方法': 3,
+    '社区共创项目及比赛': 3,
+  };
   function groupKey(i) {
+    if (N[i][3] === -1) {
+      var manual = MANUAL_GROUP[N[i][1].trim()];
+      if (manual) return manual;
+    }
     var m = /^\s*([1-5])\s*[.、]/.exec(N[i][1]);
     return m ? +m[1] : 0;
+  }
+  // 组内排序：有编号的按编号升序，无编号的排到组末
+  function sortKey(i) {
+    var m = /^\s*(\d+)\s*[.、]\s*(\d*)/.exec(N[i][1]);
+    return m ? [+m[1], m[2] ? +m[2] : 0] : [99, 0];
+  }
+  function cmp(a, b) {
+    var ka = sortKey(a), kb = sortKey(b);
+    return ka[0] - kb[0] || ka[1] - kb[1];
   }
 
   // ---- 渲染：卡片 ----
@@ -282,6 +303,7 @@
       var key = GROUP_ORDER[gi];
       var list = byGroup[key];
       if (!list || !list.length) continue;
+      list.sort(cmp);
       var h = document.createElement('div');
       h.className = 'grp';
       h.textContent = GROUP_NAME[key];
