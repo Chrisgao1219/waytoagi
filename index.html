@@ -7,26 +7,28 @@
 <title>WaytoAGI 知识库导航</title>
 <style>
   :root {
-    --bg: #fbfbfd;
+    --bg: #fafafb;
     --panel: #ffffff;
     --text: #1d1d1f;
-    --text-dim: #6e6e73;
-    --line: #e3e3e6;
-    --hover: #f2f2f5;
+    --text-dim: #76767e;
+    --line: #e6e6ea;
+    --hover: #f4f4f7;
     --accent: #2f6feb;
     --accent-soft: #eaf1fe;
-    --shadow: 0 1px 3px rgba(0,0,0,.06);
+    --shadow: 0 1px 2px rgba(0,0,0,.05);
+    --shadow-hover: 0 4px 14px rgba(0,0,0,.08);
   }
   [data-theme="dark"] {
-    --bg: #16161a;
-    --panel: #1e1e23;
-    --text: #e8e8ea;
-    --text-dim: #9a9aa2;
-    --line: #2e2e35;
-    --hover: #27272e;
-    --accent: #5b8def;
-    --accent-soft: #1f2a3f;
-    --shadow: 0 1px 3px rgba(0,0,0,.4);
+    --bg: #15151a;
+    --panel: #1d1d23;
+    --text: #e9e9ec;
+    --text-dim: #90909a;
+    --line: #2c2c34;
+    --hover: #26262e;
+    --accent: #6f9dfb;
+    --accent-soft: #1e2a40;
+    --shadow: 0 1px 2px rgba(0,0,0,.3);
+    --shadow-hover: 0 4px 14px rgba(0,0,0,.45);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -37,155 +39,168 @@
           "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 36px 22px 72px; }
 
-  header { margin-bottom: 22px; }
-  .title-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  h1 { font-size: 24px; margin: 0; letter-spacing: -.2px; }
-  .meta { color: var(--text-dim); font-size: 13px; }
-  .sub { color: var(--text-dim); font-size: 14px; margin: 8px 0 0; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  h1 {
+    font-size: 21px; margin: 0; flex: 1; letter-spacing: -.2px;
+    cursor: pointer; font-weight: 600;
+  }
+  h1:hover { color: var(--accent); }
 
-  .toolbar {
-    display: flex; gap: 10px; align-items: center;
-    margin: 18px 0 12px; flex-wrap: wrap;
+  .iconbtn {
+    flex: 0 0 auto; width: 34px; height: 34px;
+    display: grid; place-items: center;
+    font-size: 15px; font-family: inherit; color: var(--text-dim);
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 9px; cursor: pointer; transition: color .15s, border-color .15s;
   }
-  .search {
-    flex: 1 1 280px; position: relative;
-  }
+  .iconbtn:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .search { position: relative; margin-bottom: 8px; }
   .search input {
-    width: 100%; padding: 10px 36px 10px 14px;
+    width: 100%; padding: 11px 38px 11px 14px;
     font-size: 15px; font-family: inherit;
     color: var(--text); background: var(--panel);
-    border: 1px solid var(--line); border-radius: 9px;
+    border: 1px solid var(--line); border-radius: 10px;
     outline: none; transition: border-color .15s, box-shadow .15s;
   }
-  .search input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
+  .search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .search .clear {
-    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    position: absolute; right: 7px; top: 50%; transform: translateY(-50%);
     border: 0; background: transparent; color: var(--text-dim);
-    font-size: 18px; cursor: pointer; padding: 2px 6px; border-radius: 5px;
-    display: none; line-height: 1;
+    font-size: 19px; line-height: 1; cursor: pointer;
+    padding: 3px 7px; border-radius: 6px; display: none;
   }
   .search .clear:hover { background: var(--hover); color: var(--text); }
   .search.has-value .clear { display: block; }
 
-  button.btn {
-    padding: 9px 13px; font-size: 14px; font-family: inherit;
-    color: var(--text); background: var(--panel);
-    border: 1px solid var(--line); border-radius: 9px;
-    cursor: pointer; white-space: nowrap; transition: background .15s;
+  /* 分组 */
+  .grp {
+    margin: 30px 0 11px; font-size: 12.5px; font-weight: 600;
+    color: var(--text-dim); letter-spacing: .4px;
   }
-  button.btn:hover { background: var(--hover); }
+  .grp:first-child { margin-top: 22px; }
 
-  .panel {
+  /* 卡片网格 */
+  .grid {
+    display: grid; gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(228px, 1fr));
+  }
+  .card {
+    display: flex; flex-direction: column; gap: 6px;
+    min-height: 84px; padding: 13px 15px;
     background: var(--panel); border: 1px solid var(--line);
-    border-radius: 12px; box-shadow: var(--shadow); overflow: hidden;
+    border-radius: 11px; box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
   }
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+  }
+  .card .t {
+    font-size: 14.5px; font-weight: 500; line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden; word-break: break-word;
+  }
+  .card .n { margin-top: auto; font-size: 12px; color: var(--text-dim); }
+  .card.leaf .t::after { content: " ↗"; color: var(--text-dim); font-weight: 400; font-size: 12px; }
+  .card.leaf:hover .t::after { color: var(--accent); }
 
-  /* 树 */
-  .row {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 12px 7px 0; border-bottom: 1px solid var(--line);
-    cursor: pointer; position: relative;
+  /* 节点页 */
+  .crumb { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.9; }
+  .crumb a { color: var(--text-dim); text-decoration: none; }
+  .crumb a:hover { color: var(--accent); }
+  .crumb .sep { margin: 0 6px; opacity: .5; }
+  .nhead { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 22px; }
+  .nhead h2 { flex: 1; margin: 0; font-size: 19px; line-height: 1.45; font-weight: 600; word-break: break-word; }
+  .openbtn {
+    flex: 0 0 auto; padding: 8px 14px; font-size: 13.5px; font-family: inherit;
+    color: var(--accent); background: var(--accent-soft);
+    border: 1px solid transparent; border-radius: 9px;
+    cursor: pointer; white-space: nowrap; text-decoration: none;
+    transition: opacity .15s;
   }
-  .row:last-child { border-bottom: 0; }
-  .row:hover { background: var(--hover); }
-  .twist {
-    flex: 0 0 20px; text-align: center; color: var(--text-dim);
-    font-size: 10px; transition: transform .12s; user-select: none;
+  .openbtn:hover { opacity: .82; }
+
+  /* 搜索结果 */
+  .hits { border: 1px solid var(--line); border-radius: 11px; overflow: hidden; background: var(--panel); }
+  .hit {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 15px; border-bottom: 1px solid var(--line); cursor: pointer;
   }
-  .twist.open { transform: rotate(90deg); }
-  .twist.leaf { visibility: hidden; }
-  .ico { flex: 0 0 auto; font-size: 13px; opacity: .85; }
-  .label {
-    flex: 1 1 auto; min-width: 0; overflow: hidden;
-    text-overflow: ellipsis; white-space: nowrap;
+  .hit:last-child { border-bottom: 0; }
+  .hit:hover { background: var(--hover); }
+  .hit .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hit .g {
+    flex: 0 1 auto; max-width: 42%; font-size: 12px; color: var(--text-dim);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .row.leaf-row .label:hover { color: var(--accent); }
-  .go {
-    flex: 0 0 auto; color: var(--text-dim); text-decoration: none;
-    font-size: 13px; padding: 2px 7px; border-radius: 6px; opacity: 0;
-    transition: opacity .12s, background .12s;
-  }
-  .row:hover .go { opacity: 1; }
-  .go:hover { background: var(--accent-soft); color: var(--accent); }
-  .kids { display: none; margin-left: 22px; border-left: 1px solid var(--line); }
-  .kids.open { display: block; }
-  .path { color: var(--text-dim); font-size: 12px; margin-left: 8px; }
+  .hit .g::before { content: "· "; opacity: .6; }
 
   mark { background: #ffe58f; color: inherit; border-radius: 2px; padding: 0 1px; }
-  [data-theme="dark"] mark { background: #6b5416; }
+  [data-theme="dark"] mark { background: #6b5416; color: #f5e6b8; }
 
-  .empty { padding: 28px; text-align: center; color: var(--text-dim); font-size: 14px; }
-  .more { padding: 10px 16px; color: var(--text-dim); font-size: 13px; border-top: 1px solid var(--line); }
-  footer { margin-top: 22px; color: var(--text-dim); font-size: 13px; text-align: center; }
-  footer a { color: var(--text-dim); }
+  .empty, .note { padding: 34px 0; text-align: center; color: var(--text-dim); font-size: 14px; }
+  .more { padding: 11px 15px; color: var(--text-dim); font-size: 12.5px; border-top: 1px solid var(--line); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="title-row">
-      <h1>WaytoAGI 知识库导航</h1>
-      <span class="meta" id="stat"></span>
-    </div>
-    <p class="sub">点击条目标题即可展开子目录；点击右侧 ↗ 在飞书中打开原文。</p>
+    <h1 id="home">WaytoAGI 知识库导航</h1>
+    <button class="iconbtn" id="theme" title="切换主题">◐</button>
   </header>
 
-  <div class="toolbar">
-    <div class="search" id="searchWrap">
-      <input id="q" type="search" placeholder="搜索标题…（支持全库 14552 个节点）" autocomplete="off">
-      <button class="clear" id="clear" title="清空">×</button>
-    </div>
-    <button class="btn" id="collapse">收起全部</button>
-    <button class="btn" id="theme" title="切换主题">◐</button>
+  <div class="search" id="searchWrap">
+    <input id="q" type="search" placeholder="搜索标题…" autocomplete="off">
+    <button class="clear" id="clear" title="清空">×</button>
   </div>
 
-  <div class="panel" id="panel"></div>
-
-  <footer>
-    数据来源：<a href="https://waytoagi.feishu.cn/wiki/DOYPwcGHAiluiekAeGgc3kM8nNb" target="_blank" rel="noopener">WaytoAGI 知识库</a>
-    · 内容版权归原作者所有 · 本站仅作目录导航
-  </footer>
+  <div id="view"></div>
 </div>
 
 <script src="data.js"></script>
 <script>
 (function () {
   var D = window.WIKI_DATA;
-  var N = D.nodes;                 // [token, title, type, parentIdx, hasChild]
+  var N = D.nodes;          // [node_token, title, type, parentIdx, hasChild]
   var BASE = D.base;
   var TYPES = D.types;
-  var ICON = { docx: '📄', sheet: '📊', bitable: '🗂', file: '📎', slides: '🖥', mindnote: '🧠' };
-  var MAX_HITS = 300;
+  var TYPE_LABEL = { docx: '文档', sheet: '表格', bitable: '多维表格',
+                     file: '附件', slides: '幻灯片', mindnote: '思维笔记' };
+  var MAX_HITS = 200;
 
-  var panel = document.getElementById('panel');
+  var view = document.getElementById('view');
   var qEl = document.getElementById('q');
-  var statEl = document.getElementById('stat');
   var searchWrap = document.getElementById('searchWrap');
-  var openSet = Object.create(null);   // 已展开的节点下标
 
-  // 预建 children 索引
+  // ---- 索引 ----
   var children = Object.create(null);
   for (var i = 0; i < N.length; i++) {
     var p = N[i][3];
     (children[p] || (children[p] = [])).push(i);
   }
   var roots = children[-1] || [];
-  statEl.textContent = '共 ' + N.length.toLocaleString() + ' 个节点 · ' + roots.length + ' 个一级目录';
 
-  function linkOf(i) { return BASE + N[i][0]; }
+  // 子树规模
+  var size = new Array(N.length).fill(1);
+  function calcSize(i) {
+    var s = 1, ks = children[i];
+    if (ks) for (var j = 0; j < ks.length; j++) s += calcSize(ks[j]);
+    size[i] = s;
+    return s;
+  }
+  roots.forEach(calcSize);
 
+  // ---- 工具 ----
   function esc(s) {
-    return s.replace(/[&<>"]/g, function (c) {
+    return String(s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
   }
-
-  // 高亮关键词
   function hl(text, kw) {
     if (!kw) return esc(text);
     var lo = text.toLowerCase(), k = kw.toLowerCase(), out = '', from = 0, at;
@@ -195,168 +210,197 @@
     }
     return out + esc(text.slice(from));
   }
+  function linkOf(i) { return BASE + N[i][0]; }
+  function chainOf(i) {
+    var arr = [], cur = i, guard = 0;
+    while (cur !== -1 && cur !== undefined && guard++ < 30) { arr.unshift(cur); cur = N[cur][3]; }
+    return arr;
+  }
+  // 所属一级目录名（去掉编号前缀），用于搜索结果右侧标签
+  function rootLabel(i) {
+    var ch = chainOf(i);
+    return N[ch[0]][1].replace(/^\s*[1-5]\s*[.、]\s*[\d.]*\s*/, '').trim();
+  }
+  function go(i) {
+    if ((children[i] || []).length) location.hash = '#/n/' + i;
+    else window.open(linkOf(i), '_blank', 'noopener');
+  }
 
-  function makeRow(i, kw) {
-    var node = N[i];
-    var hasChild = node[4] === 1 && children[i];
-    var row = document.createElement('div');
-    row.className = 'row' + (hasChild ? '' : ' leaf-row');
+  // ---- 分组 ----
+  var GROUP_ORDER = [1, 2, 3, 4, 5, 0];
+  var GROUP_NAME = {
+    1: '1 · 入门与创作',
+    2: '2 · 应用与专题',
+    3: '3 · 案例与工具',
+    4: '4 · 动态与资讯',
+    5: '5 · 关于',
+    0: '其他',
+  };
+  function groupKey(i) {
+    var m = /^\s*([1-5])\s*[.、]/.exec(N[i][1]);
+    return m ? +m[1] : 0;
+  }
 
-    var tw = document.createElement('span');
-    tw.className = 'twist' + (hasChild ? '' : ' leaf');
-    tw.textContent = '▶';
-    row.appendChild(tw);
+  // ---- 渲染：卡片 ----
+  function makeCard(i) {
+    var hasChild = (children[i] || []).length > 0;
+    var el = document.createElement('div');
+    el.className = 'card' + (hasChild ? '' : ' leaf');
 
-    var ico = document.createElement('span');
-    ico.className = 'ico';
-    ico.textContent = ICON[TYPES[node[2]]] || '•';
-    row.appendChild(ico);
+    var t = document.createElement('div');
+    t.className = 't';
+    t.textContent = N[i][1] || '(无标题)';
+    el.appendChild(t);
 
-    var lab = document.createElement('span');
-    lab.className = 'label';
-    lab.innerHTML = hl(node[1] || '(无标题)', kw);
-    row.appendChild(lab);
+    var n = document.createElement('div');
+    n.className = 'n';
+    n.textContent = hasChild
+      ? (size[i] - 1).toLocaleString() + ' 个条目'
+      : (TYPE_LABEL[TYPES[N[i][2]]] || '条目');
+    el.appendChild(n);
 
+    el.addEventListener('click', function () { go(i); });
+    return el;
+  }
+
+  function makeGrid(list) {
+    var g = document.createElement('div');
+    g.className = 'grid';
+    for (var k = 0; k < list.length; k++) g.appendChild(makeCard(list[k]));
+    return g;
+  }
+
+  // ---- 首页 ----
+  function renderHome() {
+    view.innerHTML = '';
+    var byGroup = {};
+    for (var r = 0; r < roots.length; r++) {
+      var k = groupKey(roots[r]);
+      (byGroup[k] || (byGroup[k] = [])).push(roots[r]);
+    }
+    for (var gi = 0; gi < GROUP_ORDER.length; gi++) {
+      var key = GROUP_ORDER[gi];
+      var list = byGroup[key];
+      if (!list || !list.length) continue;
+      var h = document.createElement('div');
+      h.className = 'grp';
+      h.textContent = GROUP_NAME[key];
+      view.appendChild(h);
+      view.appendChild(makeGrid(list));
+    }
+  }
+
+  // ---- 节点页 ----
+  function renderNode(idx) {
+    if (!N[idx]) { renderHome(); return; }
+    view.innerHTML = '';
+    var chain = chainOf(idx);
+
+    var crumb = document.createElement('div');
+    crumb.className = 'crumb';
+    var parts = ['<a href="#/">首页</a>'];
+    for (var c = 0; c < chain.length - 1; c++) {
+      parts.push('<a href="#/n/' + chain[c] + '">' + esc(N[chain[c]][1]) + '</a>');
+    }
+    crumb.innerHTML = parts.join('<span class="sep">/</span>');
+    view.appendChild(crumb);
+
+    var head = document.createElement('div');
+    head.className = 'nhead';
+    var h2 = document.createElement('h2');
+    h2.textContent = N[idx][1] || '(无标题)';
+    head.appendChild(h2);
     var a = document.createElement('a');
-    a.className = 'go';
-    a.href = linkOf(i);
+    a.className = 'openbtn';
+    a.href = linkOf(idx);
     a.target = '_blank';
     a.rel = 'noopener';
-    a.textContent = '↗';
-    a.title = '在飞书中打开';
-    a.addEventListener('click', function (e) { e.stopPropagation(); });
-    row.appendChild(a);
+    a.textContent = '在飞书中打开 ↗';
+    head.appendChild(a);
+    view.appendChild(head);
 
-    var kids = null;
-    if (hasChild) {
-      kids = document.createElement('div');
-      kids.className = 'kids';
-      row._kids = kids;
-      row._twist = tw;
-      if (openSet[i]) { kids.className = 'kids open'; tw.className = 'twist open'; }
-      // 点击行：展开/收起
-      row.addEventListener('click', function () { toggle(i, kids, tw); });
-    } else {
-      row.addEventListener('click', function () { window.open(linkOf(i), '_blank', 'noopener'); });
-    }
-    return row;
-  }
-
-  function toggle(i, kids, tw) {
-    if (kids.classList.contains('open')) {
-      kids.classList.remove('open');
-      tw.classList.remove('open');
-      delete openSet[i];
-    } else {
-      if (!kids.childElementCount) renderInto(kids, children[i], '');
-      kids.classList.add('open');
-      tw.classList.add('open');
-      openSet[i] = 1;
+    var kids = children[idx] || [];
+    if (kids.length) view.appendChild(makeGrid(kids));
+    else {
+      var note = document.createElement('div');
+      note.className = 'note';
+      note.textContent = '该条目没有下级目录，点击上方按钮在飞书中打开原文。';
+      view.appendChild(note);
     }
   }
 
-  function renderInto(container, list, kw) {
-    var frag = document.createDocumentFragment();
-    for (var k = 0; k < list.length; k++) {
-      var row = makeRow(list[k], kw);
-      frag.appendChild(row);
-      if (row._kids) frag.appendChild(row._kids);
-    }
-    container.appendChild(frag);
-  }
-
-  // 构建路径（从根到该节点的标题链），供搜索结果定位
-  function pathOf(i) {
-    var parts = [], cur = N[i][3], guard = 0;
-    while (cur !== -1 && guard++ < 20) {
-      parts.unshift(N[cur][1]);
-      cur = N[cur][3];
-    }
-    if (parts.length > 3) parts = ['…'].concat(parts.slice(-3));
-    return parts.join(' / ');
-  }
-
-  var mode = 'tree';
-  function renderTree() {
-    mode = 'tree';
-    panel.innerHTML = '';
-    renderInto(panel, roots, '');
-  }
-
+  // ---- 搜索 ----
   function renderSearch(kw) {
-    mode = 'search';
-    panel.innerHTML = '';
-    var hits = [];
-    var k = kw.toLowerCase();
+    view.innerHTML = '';
+    window.scrollTo(0, 0);
+    var k = kw.toLowerCase(), hits = [];
     for (var i = 0; i < N.length; i++) {
       if ((N[i][1] || '').toLowerCase().indexOf(k) !== -1) hits.push(i);
     }
     if (!hits.length) {
-      panel.innerHTML = '<div class="empty">没有匹配「' + esc(kw) + '」的条目</div>';
+      var e = document.createElement('div');
+      e.className = 'empty';
+      e.textContent = '没有匹配「' + kw + '」的条目';
+      view.appendChild(e);
       return;
     }
+    var box = document.createElement('div');
+    box.className = 'hits';
     var shown = hits.slice(0, MAX_HITS);
-    var frag = document.createDocumentFragment();
     for (var j = 0; j < shown.length; j++) {
-      frag.appendChild(searchRow(shown[j], kw));
+      var idx = shown[j];
+      var row = document.createElement('div');
+      row.className = 'hit';
+      row.innerHTML = '<span class="t">' + hl(N[idx][1] || '(无标题)', kw) + '</span>' +
+                      '<span class="g">' + esc(rootLabel(idx)) + '</span>';
+      (function (n) {
+        row.addEventListener('click', function () {
+          window.open(linkOf(n), '_blank', 'noopener');
+        });
+      })(idx);
+      box.appendChild(row);
     }
-    panel.appendChild(frag);
+    view.appendChild(box);
     if (hits.length > MAX_HITS) {
-      var more = document.createElement('div');
-      more.className = 'more';
-      more.textContent = '仅显示前 ' + MAX_HITS + ' 条，共 ' + hits.length + ' 条匹配 —— 请补充关键词缩小范围。';
-      panel.appendChild(more);
+      var m = document.createElement('div');
+      m.className = 'more';
+      m.textContent = '仅显示前 ' + MAX_HITS + ' 条，共 ' + hits.length + ' 条匹配 —— 请补充关键词缩小范围。';
+      view.appendChild(m);
     }
   }
 
-  function searchRow(i, kw) {
-    var node = N[i];
-    var row = document.createElement('div');
-    row.className = 'row leaf-row';
-    row.innerHTML =
-      '<span class="twist leaf">▶</span>' +
-      '<span class="ico">' + (ICON[TYPES[node[2]]] || '•') + '</span>' +
-      '<span class="label">' + hl(node[1] || '(无标题)', kw) +
-        '<span class="path">' + esc(pathOf(i)) + '</span></span>';
-    var a = document.createElement('a');
-    a.className = 'go';
-    a.href = linkOf(i);
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.textContent = '↗';
-    a.title = '在飞书中打开';
-    a.addEventListener('click', function (e) { e.stopPropagation(); });
-    row.appendChild(a);
-    row.addEventListener('click', function () { window.open(linkOf(i), '_blank', 'noopener'); });
-    return row;
+  // ---- 路由 ----
+  function route() {
+    var m = /^#\/n\/(\d+)$/.exec(location.hash);
+    if (m) renderNode(+m[1]);
+    else renderHome();
+    window.scrollTo(0, 0);
   }
+  window.addEventListener('hashchange', route);
 
-  // 搜索输入（防抖）
   var timer = null;
   qEl.addEventListener('input', function () {
     var v = qEl.value.trim();
     searchWrap.classList.toggle('has-value', !!qEl.value);
     clearTimeout(timer);
     timer = setTimeout(function () {
-      if (!v) renderTree();
+      if (!v) route();
       else renderSearch(v);
     }, 140);
   });
   document.getElementById('clear').addEventListener('click', function () {
     qEl.value = '';
     searchWrap.classList.remove('has-value');
-    renderTree();
+    route();
     qEl.focus();
   });
-  document.getElementById('collapse').addEventListener('click', function () {
-    openSet = Object.create(null);
+  document.getElementById('home').addEventListener('click', function () {
     qEl.value = '';
     searchWrap.classList.remove('has-value');
-    renderTree();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    location.hash = '#/';
   });
 
-  // 主题
+  // ---- 主题 ----
   var root = document.documentElement;
   var saved = localStorage.getItem('wt-theme');
   if (saved) root.setAttribute('data-theme', saved);
@@ -368,7 +412,7 @@
     localStorage.setItem('wt-theme', next);
   });
 
-  renderTree();
+  route();
 })();
 </script>
 </body>
